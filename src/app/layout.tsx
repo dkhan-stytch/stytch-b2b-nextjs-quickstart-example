@@ -8,6 +8,7 @@ import StytchProvider from '../components/StytchProvider';
 import Link from 'next/link';
 import { useStytchB2BClient, useStytchMemberSession } from '@stytch/nextjs/b2b';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -33,14 +34,30 @@ const SideNav = () => {
   const stytch = useStytchB2BClient();
   const { session } = useStytchMemberSession();
   const router = useRouter();
+  const [isEmailOtpCompleted, setIsEmailOtpCompleted] = React.useState(false);
+
+  React.useEffect(() => {
+    // Initial check
+    const emailOtpCompleted = localStorage.getItem('emailOtpCompleted') === 'true';
+    setIsEmailOtpCompleted(emailOtpCompleted);
+
+    // Listen for custom event
+    const handleEmailOtpCompleted = () => {
+      setIsEmailOtpCompleted(true);
+    };
+
+    window.addEventListener('emailOtpCompleted', handleEmailOtpCompleted);
+    return () => window.removeEventListener('emailOtpCompleted', handleEmailOtpCompleted);
+  }, []);
 
   const handleLogOut = () => {
     stytch.session.revoke().then(() => {
+      localStorage.removeItem('emailOtpCompleted');
       router.replace('/');
     });
   };
 
-  if (!session) {
+  if (!session || !isEmailOtpCompleted) {
     return null;
   }
   return (

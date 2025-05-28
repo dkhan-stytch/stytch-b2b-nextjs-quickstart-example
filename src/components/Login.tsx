@@ -21,6 +21,11 @@ const Login = () => {
     const [isEMLOTP, setIsEMLOTP] = React.useState(false);
     const {organization} = useStytchOrganization();
 
+    // Clear email OTP completion state when component mounts
+    React.useEffect(() => {
+        localStorage.removeItem('emailOtpCompleted');
+    }, []);
+
     return (
         <div className="centered-login">
             {!isEMLOTP && <StytchB2B
@@ -48,6 +53,9 @@ const Login = () => {
               callbacks={{
                   onEvent: (event) => {
                       if (event.type === StytchEventType.AuthenticateFlowComplete) {
+                          localStorage.setItem('emailOtpCompleted', 'true');
+                          // Dispatch custom event
+                          window.dispatchEvent(new Event('emailOtpCompleted'));
                           router.replace('/dashboard');
                       }
                   },
