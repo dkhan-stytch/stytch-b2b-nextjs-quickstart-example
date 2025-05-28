@@ -41,7 +41,7 @@ export const adminPortalConfig = {
 
 export const discoveryConfig = {
   authFlowType: AuthFlowType.Discovery,
-  products: [B2BProducts.sso, B2BProducts.oauth, B2BProducts.emailMagicLinks],
+  products: [B2BProducts.sso, B2BProducts.oauth, B2BProducts.emailMagicLinks, B2BProducts.passwords],
   sessionOptions: {
     sessionDurationMinutes: 60,
   },
